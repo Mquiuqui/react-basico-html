@@ -1,0 +1,94 @@
+<html>
+<head>
+    <title>Aprendendo React</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/umd-react/dist/react.development.js"></script>
+    <script src="https://unpkg.com/umd-react/dist/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</body>
+<script type="text/jsx">
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+
+    function Header({ text }) {
+        return <h1>{text}</h1>;
+    }
+
+    function List() {
+        const items = [1, 2, 3, 4, 5];
+        return (
+            <ul>
+                {items.map(item => (
+                    <li key={item}>Item {item}</li>
+                ))}
+            </ul>
+        );
+    }
+
+    function Button({text, onClickFct}) {
+        return <button onClick={onClickFct}>{text}. <CounterLabel /></button>;
+    }
+
+    const CounterContext = React.createContext();
+    function CounterContextProvider({ children }) {
+        const [counter, setCounter] = React.useState(0);
+        
+        return (
+            <CounterContext.Provider value={{ counter, setCounter }}>
+                {children}
+            </CounterContext.Provider>
+        );
+    }
+
+    function CounterLabel() {
+        const { counter } = React.useContext(CounterContext);
+        return <span>Já foram clicados {counter} vezes!</span>;
+    }
+
+    function InfoBox() {
+        const { counter } = React.useContext(CounterContext);
+        const [ resto, setResto ] = React.useState(0);
+
+        React.useEffect(() => {
+            setResto(counter % 2);
+        }, [counter]);
+
+        return (<div>
+            <p> O resto da divisão por 2 do contador é: {resto} </p>
+        </div>);
+    }
+
+    function Content() {
+        const { counter, setCounter } = React.useContext(CounterContext);
+        const increment = () => {
+            alert(`Botão clicado ${counter} vezes!`)
+            setCounter(counter + 1);
+        };
+
+        return (
+            <div>
+                <Header text="Aprendendo React do Zero!" />
+                <p>Este é um exemplo simples de um componente React.</p>
+                <List />
+                <Button 
+                    text={`Clique aqui`}
+                    onClickFct={increment} 
+                />
+                <InfoBox />
+            </div>
+        );
+    }
+
+    function App() {
+        return (
+            <CounterContextProvider>
+                <Content />
+            </CounterContextProvider>
+        );
+    }
+    
+    root.render(<App />);
+</script>
+</html>
